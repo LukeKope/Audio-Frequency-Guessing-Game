@@ -1,0 +1,6 @@
+IDEAS FOR PROJECT
+_________________
+
+1. Maybe visualize pitches with lines of different colors, major chords being warmer, minor being colder
+2. Play with color and sounds to create cool visualization of music
+3. Maybe have game that uses music as main way to interact with user?
