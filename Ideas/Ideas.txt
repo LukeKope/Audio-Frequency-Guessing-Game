@@ -4,3 +4,13 @@ _________________
 1. Maybe visualize pitches with lines of different colors, major chords being warmer, minor being colder
 2. Play with color and sounds to create cool visualization of music
 3. Maybe have game that uses music as main way to interact with user?
+
+*IDEA*
+_________________________________________________________________________________________________________________________________________
+Look at in class example for sound how the color changes based on the sound made (i.e. 440 Hz is all blue)
+
+Make a game with multiple levels where it plays a random frequency for the user then the user has to drag to match the frequency and the color will act as a visual aid to help user see if they're matching the frequency. Maybe display color at start with sound to show user they're aiming for that color. Then when energy is at max for that frequency, the wave color is fully that displayed color.
+
+You can check for a level clear by saying if fft.getEnergy(frequency()>=255) for a certain amount of time, having the time reset anytime the user diverges from that point (can also allow for a bit of user error by saying >= 245 to give like a ten pixel window if it's too hard).You'd have millis start once the condition was cleared that the energy was above the number, then have it reset once it's off that. Once the number of time is passed, say clear and maybe play a chord?
+
+Have harder levels where you need to find multiple notes in a row. Keep track of order in which notes played too using booleans
