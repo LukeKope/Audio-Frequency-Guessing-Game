@@ -1,5 +1,7 @@
 let osc, env, fft;
 
+let victory = False;
+
 let attackLevel = 1.0;
 let releaseLevel = 0;
 
@@ -52,4 +54,21 @@ function keyReleased() {
 //Mapping frequency to the position of the mouse
 function mouseDragged() {
   osc.freq(map(mouseX, 0, windowWidth, 0, 2200));
+}
+
+
+function victoryCheck(){
+  //If user is at right frequency (i.e. the color is all the way green)
+  if(fft.getEnergy>=255){
+    //Start timer if user is at correct frequency
+    let m = millis();
+    //If user holds at right frequency for 3 seconds, victory = True, move on to next level
+    if(m==3000){
+      victory = True;
+    }
+    else{
+      //reset m to zero if user moves position
+      m = 0;
+    }
+  }
 }
