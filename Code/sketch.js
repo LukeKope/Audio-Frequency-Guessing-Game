@@ -59,7 +59,7 @@ function draw() {
   push();
   noStroke();
   osc.start();
-  fill(200 - (.3 * (fft.getEnergy(new_freq))), fft.getEnergy(new_freq), 20); // spectrum is green depending on energy of the frequency. Have color change to red if further or blue if further. Maybe blue for too low and red for too high
+  fill(200 - (0.3 * (fft.getEnergy(new_freq))), fft.getEnergy(new_freq), 20); // spectrum is green depending on energy of the frequency. Have color change to red if further or blue if further. Maybe blue for too low and red for too high
   for (let i = 0; i < freqs.length; i++) {
     let x = map(i, 0, freqs.length, 0, windowWidth);
     //sets the height equal the negative height of the browser plus the index of the frequency of the particular part of the FFT spectrum (all values between 0 and 255) from the height to 100 pixels
@@ -90,11 +90,10 @@ function draw() {
   //Game instructions
   textSize(24);
   fill(0);
-  text("Press 'a' to play! Once you think you've found the right note, press 'f'! For a hint, press 'r'", 200, 100);
+  text("Drag your mouse to play! Once you think you've found the right note, press 'f'! For a hint, press 'r'", 200, 100);
 }
 
 function keyPressed() {
-  osc.amp(0.1);
   if (key == "a" & usedHint == false) {
     env.play(osc, 0, 0.1);
   } else if (key == "a" & usedHint == true) {
@@ -120,8 +119,9 @@ function keyPressed() {
 
 //Mapping frequency to the position of the mouse
 function mouseMoved() {
-  //mapping values from 100 to 4000 to 0 through windowWidth
-  osc.freq(map(mouseX, 100, 4000, 0, width));
+  //mapping values from 0, windowWidth from 0 to 3000Hz
+  osc.freq(map(mouseX, 0, windowWidth, 0, 3000));
+  env.play(osc, 0, 0.01);
 }
 
 
@@ -139,5 +139,5 @@ function pickVictoryFrequency(victoryFreqs) {
 //function will preview target frequency for user to replicate
 function playTargetFrequency() {
   osc.freq(new_freq);
-  env.play(osc, 0, 1);
+  env.play(osc, 0, 0.1);
 }
