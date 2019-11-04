@@ -2,7 +2,7 @@ let osc, fft;
 //Variables for game: victory condition, and game frequencies
 let victory = false;
 //Array of frequencies to be chosen for victory condition
-let targetFrequency = [200, 500, 400, 1500, 2000];
+let targetFrequency = [440, 2100, 1650, 1500, 2000, 1700, 1000, 750];
 
 
 //Set Range
@@ -20,35 +20,15 @@ let new_freq = targetFrequency[0];
 let i = 0;
 
 //number of lives player has
-let number_of_lives = 5;
+let number_of_lives = 8;
 
 //index of notes array
 let note = 0;
 //Notes to play when user loses
 let losingNotes = [523, 493, 466, 440];
-let losingSong = [{
-    note: 0,
-    duration: 1000,
-    display: "C"
-  },
-  {
-    note: 1,
-    duration: 1000,
-    display: "B"
-  },
-  {
-    note: 2,
-    duration: 1000,
-    display: "Bflat"
-  },
-  {
-    note: 3,
-    duration: 3000,
-    display: "A"
-  },
 
-];
-
+//check if user used hint. If they did, on the next press of "a", move frequency to a random location
+let usedHint = false;
 
 function setup() {
   fft = new p5.FFT();
@@ -85,7 +65,7 @@ function draw() {
     //sets the height equal the negative height of the browser plus the index of the frequency of the particular part of the FFT spectrum (all values between 0 and 255) from the height to 100 pixels
     let h = -height + map(freqs[i], 0, 255, height, 100);
     //set each rectangle in the fft to width of 5 and height of h
-    rect(x, 1000, 2, h * .5);
+    rect(x, 1000, 2, h * .25);
   }
   pop();
 
@@ -95,11 +75,6 @@ function draw() {
     fill(255, 0, 0);
     textSize(100);
     text("Game Over", windowWidth / 2.5, windowHeight / 2);
-    while (note < 4) {
-      osc.freq(losingNotes[note]);
-      env.play(osc, 1, 1);
-      note = (note + 1) % losingNotes.length;
-    }
     noLoop();
   }
 
@@ -108,7 +83,7 @@ function draw() {
     new_freq = pickVictoryFrequency(targetFrequency);
     console.log('newfreq', (new_freq));
     //after victory, set a random starting point
-    osc.freq(int(random(0, 4000)));
+    playTargetFrequency();
     victory = false;
   }
 
@@ -119,26 +94,34 @@ function draw() {
 }
 
 function keyPressed() {
-  if (key == "a") {
-    env.play(osc, 0, .1);
-  } else if (key == "f" & fft.getEnergy(new_freq) >= 255) {
+  osc.amp(0.1);
+  if (key == "a" & usedHint == false) {
+    env.play(osc, 0, 0.1);
+  } else if (key == "a" & usedHint == true) {
+    env.play(osc, 0, 0.1);
+    usedHint = false;
+  }
+  //if user is correct, move onto the next frequency
+  else if (key == "f" & fft.getEnergy(new_freq) >= 255) {
     console.log("VICTORY");
     victory = true;
     osc.amp(0);
+    //if user is wrong, lose a life
   } else if (key == "f") {
     number_of_lives -= 1;
     victory = false;
   }
 
   if (key == "r") {
+    let usedHint = true;
     playTargetFrequency();
   }
 }
 
 //Mapping frequency to the position of the mouse
 function mouseMoved() {
-  //mapping values from 100 to 2000 to 0 through windowWidth
-  osc.freq(map(mouseX, 0, 2000, 0, windowWidth));
+  //mapping values from 100 to 4000 to 0 through windowWidth
+  osc.freq(map(mouseX, 100, 4000, 0, width));
 }
 
 
@@ -146,19 +129,15 @@ function pickVictoryFrequency(victoryFreqs) {
   console.log(i);
   console.log('Victory freq:', victoryFreqs[i])
   i += 1;
-  if (i >= 5) {
+  if (i >= 8) {
     i = 0;
   }
   return (victoryFreqs[i]);
 
 }
 
-function playSong(note) {
-  osc.freq(note);
-}
-
 //function will preview target frequency for user to replicate
-function playTargetFrequency(duration) {
+function playTargetFrequency() {
   osc.freq(new_freq);
-  env.play(osc, 0.1, .1);
+  env.play(osc, 0, 1);
 }
